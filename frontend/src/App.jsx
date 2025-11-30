@@ -1,90 +1,108 @@
-import { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 
-const API_BASE = "http://localhost:5000/api/chat";
-
 function App() {
-	const [sessionId, setSessionId] = useState("");
-	const [messages, setMessages] = useState([
-		{
-			role: "bot",
-			content:
-				"Hi! I can help you track your order. Try asking: 'Where is my order?'",
-		},
-	]);
-	const [input, setInput] = useState("");
-	const [loading, setLoading] = useState(false);
+	const [message, setMessage] = useState("");
+	const [chat, setChat] = useState([{ bot: "Hi! Ask me: Where is my order?" }]);
 
-	useEffect(() => {
-		const id = "sess-" + Date.now() + "-" + Math.random().toString(36).slice(2);
-		setSessionId(id);
-	}, []);
+	const sessionId = "user123"; // simple fixed session
 
 	const sendMessage = async () => {
-		if (!input.trim()) return;
-		const userMsg = { role: "user", content: input };
-		setMessages((prev) => [...prev, userMsg]);
+		if (!message.trim()) return;
 
-		setLoading(true);
+		// Add user message
+		setChat((prev) => [...prev, { user: message }]);
+
 		try {
-			const res = await axios.post(`${API_BASE}/message`, {
+			const res = await axios.post("http://localhost:5000/api/chat/message", {
 				sessionId,
-				message: input,
+				message,
 			});
 
-			const botMsg = { role: "bot", content: res.data.reply };
-			setMessages((prev) => [...prev, botMsg]);
+			// Add bot reply
+			setChat((prev) => [...prev, { bot: res.data.reply }]);
 		} catch (err) {
-			console.error(err);
-			setMessages((prev) => [
-				...prev,
-				{ role: "bot", content: "Error talking to server." },
-			]);
-		} finally {
-			setInput("");
-			setLoading(false);
+			setChat((prev) => [...prev, { bot: "Server error" }]);
 		}
-	};
 
-	const handleKey = (e) => {
-		if (e.key === "Enter" && !e.shiftKey) {
-			e.preventDefault();
-			sendMessage();
-		}
+		setMessage("");
 	};
 
 	return (
-		<div className='page'>
-			<div className='chat-card'>
-				<h1 className='title'>AI Order Tracking Chatbot</h1>
-				<div className='chat-window'>
-					{messages.map((m, i) => (
-						<div
-							key={i}
-							className={`msg-row \${m.role === "user" ? "right" : "left"}`}>
-							<div className={`bubble \${m.role === "user" ? "user" : "bot"}`}>
-								{m.content}
-							</div>
-						</div>
-					))}
-					{loading && <div className='typing'>Bot is typing…</div>}
-				</div>
-				<textarea
-					className='input'
-					placeholder='Type here… e.g. Where is my order?'
-					value={input}
-					onChange={(e) => setInput(e.target.value)}
-					onKeyDown={handleKey}
+		<div style={styles.container}>
+			<h2>📦 Order Tracking Chatbot</h2>
+
+			<div style={styles.chatBox}>
+				{chat.map((msg, index) => (
+					<div key={index}>
+						{msg.user && <p style={styles.user}>You: {msg.user}</p>}
+						{msg.bot && <p style={styles.bot}>Bot: {msg.bot}</p>}
+					</div>
+				))}
+			</div>
+
+			<div style={styles.inputArea}>
+				<input
+					style={styles.input}
+					value={message}
+					onChange={(e) => setMessage(e.target.value)}
+					placeholder='Type your message...'
 				/>
 				<button
-					onClick={sendMessage}
-					disabled={loading}
-					className='send-btn'>
+					style={styles.button}
+					onClick={sendMessage}>
 					Send
 				</button>
 			</div>
 		</div>
 	);
 }
+
+const styles = {
+	container: {
+		width: "400px",
+		margin: "40px auto",
+		padding: "20px",
+		fontFamily: "Arial",
+		borderRadius: "10px",
+		background: "#f5f5f5",
+		boxShadow: "0 0 10px #ccc",
+		textAlign: "center",
+	},
+	chatBox: {
+		height: "300px",
+		overflowY: "auto",
+		background: "#fff",
+		padding: "10px",
+		marginBottom: "10px",
+		borderRadius: "5px",
+		border: "1px solid #ddd",
+	},
+	user: {
+		textAlign: "right",
+		color: "blue",
+		margin: "5px",
+	},
+	bot: {
+		textAlign: "left",
+		color: "green",
+		margin: "5px",
+	},
+	inputArea: {
+		display: "flex",
+		gap: "5px",
+	},
+	input: {
+		flex: 1,
+		padding: "8px",
+	},
+	button: {
+		padding: "8px 15px",
+		background: "#007bff",
+		color: "#fff",
+		border: "none",
+		cursor: "pointer",
+	},
+};
 
 export default App;

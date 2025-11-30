@@ -1,20 +1,21 @@
 require("dotenv").config();
 const express = require("express");
+const mongoose = require("mongoose");
 const cors = require("cors");
-const connectDB = require("./config/db");
+
 const chatRoutes = require("./routes/chatRoutes");
 
 const app = express();
-connectDB();
-
 app.use(cors());
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("AI Order Tracking Chatbot Backend is running");
-});
 
+// Routes
 app.use("/api/chat", chatRoutes);
+
+app.get("/", (req, res) => {
+	res.send("Simple OTP Chatbot Backend Running");
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
