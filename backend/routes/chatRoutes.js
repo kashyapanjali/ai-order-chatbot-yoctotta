@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { handleChat } = require("../services/chatService");
+const { handleChat } = require("../models/chatService");
 
 router.post("/message", async (req, res) => {
 	try {
