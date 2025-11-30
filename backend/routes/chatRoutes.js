@@ -50,12 +50,12 @@ router.post("/message", async (req, res) => {
 			}
 
 			return res.json({
-				reply: `Order Found!\n Product: ${order.productName}\n Status: ${order.status}\n Delivery: ${order.expectedDelivery}\n🔎 Tracking ID: ${order.trackingId}`,
+				reply: `Order Found!\n Product: ${order.productName}\n Status: ${order.status}\n Delivery: ${order.expectedDelivery}\n Tracking ID: ${order.trackingId}`,
 			});
 		}
 
 		return res.json({
-			reply: "💬 Ask me: Where is my order?",
+			reply: "Ask me: Where is my order?",
 		});
 	} catch (error) {
 		console.error("Error in /message route:", error);

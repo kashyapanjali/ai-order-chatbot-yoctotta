@@ -9,8 +9,6 @@ exports.sendOtp = async (phone) => {
 			otp,
 			expiresAt: new Date(Date.now() + 5 * 60 * 1000), // 5 min
 		});
-
-		console.log("OTP (for testing):", otp); // SIMULATED OTP
 		return otp;
 	} catch (error) {
 		console.error("Error sending OTP:", error);

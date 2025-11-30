@@ -5,7 +5,7 @@ const connectDB = async () => {
 		const mongoURI = process.env.MONGO_URI;
 		
 		if (!mongoURI) {
-			throw new Error("MONGO_URI is not set in .env file. Please add MONGO_URI=mongodb://localhost:27017/order-chatbot (or your MongoDB connection string)");
+			throw new Error("MONGO_URI is not set in .env file.");
 		}
 		
 		// Connection options to prevent buffering timeout
@@ -27,8 +27,6 @@ const connectDB = async () => {
 		});
 	} catch (err) {
 		console.error("MongoDB connection error:", err.message);
-		console.error("Please make sure MongoDB is running and MONGO_URI is set correctly in .env file");
-		console.error("Current MONGO_URI:", process.env.MONGO_URI ? "Set" : "Not set");
 		throw err; // Re-throw to let the caller handle it
 	}
 };
