@@ -30,7 +30,7 @@ function App() {
 
 	return (
 		<div style={styles.container}>
-			<h2>📦 Order Tracking Chatbot</h2>
+			<h2>Order Tracking Chatbot</h2>
 
 			<div style={styles.chatBox}>
 				{chat.map((msg, index) => (
